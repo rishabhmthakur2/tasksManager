@@ -20,7 +20,23 @@ router.post("/tasks", auth, async (req, res) => {
 
 router.get("/tasks", auth, async (req, res) => {
     try {
-        const tasks = await Task.find({owner:req.user._id});
+        const sortObject = {};
+        const sortUsing = req.query.sortBy.split(':')[0];
+        const sortOrder = req.query.sortBy.split(':')[1];
+        let sortCriteria = 1;
+        if(sortOrder === 'desc'){
+            sortCriteria = -1
+        }
+        sortObject[sortUsing] = sortCriteria;
+        if(req.query.completed){
+            var completedValue = (req.query.completed == 'true');
+            const tasks = await Task.find({owner:req.user._id, completed: completedValue}).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit)).sort({sortUsing:sort({sortUsing:sortCriteria})});
+            if (!tasks) {
+                return res.status(404).send("No tasks found");
+            }
+            return res.send(tasks);
+        }
+        const tasks = await Task.find({owner:req.user._id}).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit)).sort(sortObject);
         if (!tasks) {
             return res.status(404).send("No tasks found");
         }
