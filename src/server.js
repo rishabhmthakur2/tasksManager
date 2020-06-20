@@ -5,7 +5,7 @@ const taskRouter = require('./routers/taskRoutes');
 const multer = require('multer');
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT;
 
 app.use(express.json());
 app.use(userRouter);
