@@ -1,5 +1,14 @@
 const request = require("supertest");
+const app = require("../src/app");
 const Task = require("../src/models/taskModel");
-const { TestScheduler } = require("jest");
+const { UserOne, setupDatabase } = require('./fixtures/db');
 
-test
+beforeEach(setupDatabase);
+
+test('Should create task for a user', async () => {
+    const response = await request(app).post('/tasks').set("Authorization", `Bearer ${UserOne.tokens[0].token}`).send({
+        description: 'Test 1',
+    }).expect(201);
+    const task = await Task.findById(response.body._id);
+    expect(task).not.toBeNull();
+})

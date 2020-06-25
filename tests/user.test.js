@@ -1,28 +1,9 @@
 const request = require("supertest");
-const jwt = require("jsonwebtoken");
 const app = require("../src/app");
 const User = require("../src/models/userModel");
-const mongoose = require("mongoose");
-const { response } = require("../src/app");
+const {UserOne, setupDatabase} = require('./fixtures/db');
 
-const userOneId = new mongoose.Types.ObjectId();
-
-const UserOne = {
-    _id: userOneId,
-    name: "Rishabh",
-    email: "rishabhmthakur@outlook.com",
-    password: "DragonWar@123",
-    tokens: [
-        {
-            token: jwt.sign({ _id: userOneId }, process.env.JWT_SECRET),
-        },
-    ],
-};
-
-beforeEach(async () => {
-    await User.deleteMany();
-    await new User(UserOne).save();
-});
+beforeEach(setupDatabase);
 
 test("Should signup a new user", async () => {
     const response = await request(app)
@@ -111,7 +92,6 @@ test("Should update valid user fields", async () => {
             name: "Rishabh Thakur",
         })
         .expect(200);
-    const user = await User.findById(response.body._id);
     expect(UserOne.name).not.toBe(response.body.name);
 });
 

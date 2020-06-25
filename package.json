@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "./node_modules/.bin/env-cmd -f ./config/dev.env nodemon ./src/server.js --runInBand --detectOpenHandles",
     "start": "node src/server.js",
-    "test": "./node_modules/.bin/env-cmd -f ./config/test.env jest --watch"
+    "test": "./node_modules/.bin/env-cmd -f ./config/test.env jest --watch  --runInBand"
   },
   "jest": {
     "testEnvironment": "node"
